@@ -1,0 +1,25 @@
+{
+  "name": "ekogateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "request.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "amqplib": "^0.4.0",
+    "apitree": "^1.2.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.0",
+    "mocha": "^2.3.3",
+    "should": "^7.1.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test ./node_modules/.bin/istanbul cover _mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}

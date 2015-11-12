@@ -9,14 +9,6 @@ request.call('user', 'create', ['Andrew', 'andrew@ekoapp.com'], function(err, re
   console.log(response);
 });
 
-request.call('user', 'create', ['Andrew', 'andrew@ekoapp.com'], function(err, response) {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(response);
-  }
-});
-
 request.call('file', 'upload', '/some/file/path.jpg', function(err, response) {
   console.log(response);
 });

@@ -24,13 +24,13 @@ util.inherits(Server, EventEmitter);
  * Starts gateway server and listens for incoming rpc calls
  * once call is received, runs method and returns results
  * back to the originating queue.
+ *
+ * @param {Boolean} publsish Determines whether or not to publish results of RPC calls
  */
-Server.prototype.start = function() {
+Server.prototype.start = function(publish) {
   var self = this;
 
   amqp.connect('amqp://' + self.host, function(err, conn) {
-    // Assign connection to class
-    self.conn = conn;
 
     // Listen for incoming RPC calls
     conn.createChannel(function(err, ch) {
@@ -64,6 +64,7 @@ Server.prototype.start = function() {
             console.timeEnd(methodName);
 
             // Send payload and response to listeners
+            payload.arguments.pop();
             self.emit('completed', payload, response);
           });
 
@@ -73,18 +74,20 @@ Server.prototype.start = function() {
     });
 
     // Publish completed RPC to subscribers
-    conn.createChannel(function (err, ch) {
-      ch.assertExchange(self.service, 'fanout', {durable: false});
-      self.on('completed', function(payload, response) {
-        var message = JSON.stringify({
-          payload: payload,
-          response: response
-        });
+    if (publish) {
+      conn.createChannel(function (err, ch) {
+        ch.assertExchange(self.service, 'fanout', {durable: false});
+        self.on('completed', function(payload, response) {
+          var message = JSON.stringify({
+            payload: payload,
+            response: response
+          });
 
-        ch.publish(self.service, '', new Buffer(message));
-        console.log("Published", message);
+          ch.publish(self.service, '', new Buffer(message));
+          console.log("Published", message);
+        });
       });
-    });
+    }
 
   });
 };

@@ -18,7 +18,8 @@ var Listener = function(host, service) {
 util.inherits(Listener, EventEmitter);
 
 /**
- *
+ * Start listener, waits for incoming RPC requests and emits
+ * events based on the method.
  */
 Listener.prototype.start = function() {
   var self = this;

@@ -8,8 +8,9 @@ var _            = require('underscore');
  *
  * @param {String} host Hostname of amqp server
  */
-var Request = function(host) {
+var Request = function(host, service) {
   this.host     = host;
+  this.service  = service;
   this.requests = {};
 
   EventEmitter.call(this);
@@ -25,8 +26,9 @@ util.inherits(Request, EventEmitter);
  * @param {Array|Object|String|Integer} arguments List of arguments
  * @param {Function} callback(err, response) Function called to send response back to client
  */
-Request.prototype.call = function(service, method, arguments, callback) {
-  var id = generateUuid();
+Request.prototype.call = function(method, arguments, callback) {
+  var id      = generateUuid();
+  var service = this.service;
 
   if (arguments.constructor !== Array) {
     arguments = [arguments];

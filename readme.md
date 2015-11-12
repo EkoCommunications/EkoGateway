@@ -35,6 +35,11 @@ RPC calls will need a `Server` running and a `Request` to make the calls to the 
 	calculator.call('sum', [4, 9], function(err, response) {
 		console.log(response) //This will be 13
 	});
+	
+	calculator.on('completed', function (conn) {
+	  conn.close();
+	  process.exit(0);
+	});
 
 
 ### Subscribing to RPC calls with a Listener

@@ -1,29 +1,29 @@
 var Request = require('../request');
 var request = new Request('localhost');
 
-request.call('user', 'update', {name: 'Andrew', email: 'andrew@ekoapp.com'}, function(err, response) {
-  console.log('user.update', response);
+request.call('user', 'update', ['Andrew', 'andrew@ekoapp.com'], function(err, response) {
+  console.log(response);
 });
 
-request.call('user', 'create', {name: 'Andrew', email: 'andrew@ekoapp.com'}, function(err, response) {
-  console.log('user.create', response);
+request.call('user', 'create', ['Andrew', 'andrew@ekoapp.com'], function(err, response) {
+  console.log(response);
 });
 
-request.call('user', 'create', {name: 'Andrew', email: 'andrew@ekoapp.com'}, function(err, response) {
+request.call('user', 'create', ['Andrew', 'andrew@ekoapp.com'], function(err, response) {
   if (err) {
-    console.error('user.create', err);
+    console.error(err);
   } else {
-    console.log('user.create', response);
+    console.log(response);
   }
 });
 
-request.call('file', 'upload', {path: '/some/file/path.jpg'}, function(err, response) {
-  console.log('file.upload', response);
+request.call('file', 'upload', '/some/file/path.jpg', function(err, response) {
+  console.log(response);
 });
 
 
 // @todo: Check if method on service exists
-request.call('file', 'nothinghere', {path: '/some/file/path.jpg'}, function(err, response) {
+request.call('file', 'nothinghere', '/some/file/path.jpg', function(err, response) {
   console.error(err);
 });
 

@@ -48,12 +48,15 @@ Server.prototype.start = function() {
 
           // Calling method from Request.call
           console.time(methodName);
-          method.apply(method, [payload.arguments, function (err, response) {
+
+          payload.arguments.push(function (err, response) {
 
             // Responding to Request.call with response from method
             sendToQueue(ch, msg, response);
             console.timeEnd(methodName);
-          }]);
+          });
+
+          method.apply(method, payload.arguments);
         }
       }.bind(this));
     }.bind(this));

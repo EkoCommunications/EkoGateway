@@ -4,8 +4,11 @@ var Request = require('../request');
 
 var host = 'localhost';
 var api  = {
-  sum: function(args, callback) {
-    callback(null, args.x + args.y);
+  sum: function(x, y, callback) {
+    callback(null, x + y);
+  },
+  addFive: function (args, callback) {
+    callback(null, args + 5);
   }
 };
 
@@ -17,8 +20,13 @@ describe('Gateway', function () {
 
     var r = new Request(host);
 
-    r.call('test', 'sum', {x: 1, y: 6}, function (err, response) {
-      response.should.equal(7);
+    r.call('test', 'sum', [1, 7], function (err, response) {
+      response.should.equal(8);
+    });
+
+    r.call('test', 'addFive', 5, function (err, response) {
+      console.log("RESPONSE", response);
+      response.should.equal(10);
     });
 
     r.call('test', 'nothinghere', {path: '/some/file/path.jpg'}, function(err, response) {

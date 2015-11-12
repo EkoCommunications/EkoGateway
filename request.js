@@ -22,11 +22,15 @@ util.inherits(Request, EventEmitter);
  *
  * @param {String} service Name of service to call method on
  * @param {String} method Name of method
- * @param {Object} arguments List of arguments
+ * @param {Array|Object|String|Integer} arguments List of arguments
  * @param {Function} callback(err, response) Function called to send response back to client
  */
 Request.prototype.call = function(service, method, arguments, callback) {
   var id = generateUuid();
+
+  if (arguments.constructor !== Array) {
+    arguments = [arguments];
+  }
 
   // Mark request as running
   this.requests[id] = false;

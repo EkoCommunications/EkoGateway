@@ -1,3 +1,3 @@
-module.exports = function(arguments, callback) {
-  callback(null, {id: 1, name: arguments.name, email: arguments.email});
+module.exports = function(name, email, callback) {
+  callback(null, {id: 1, name: name, email: email});
 };

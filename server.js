@@ -1,4 +1,6 @@
-var amqp = require('amqplib/callback_api');
+var util         = require('util');
+var EventEmitter = require('events');
+var amqp         = require('amqplib/callback_api');
 
 /**
  * Creates new gateway server object.
@@ -12,7 +14,11 @@ var Server = function(host, service, exposes) {
   this.service = service;
   this.host    = host;
   this.conn    = null;
+
+  EventEmitter.call(this);
 };
+
+util.inherits(Server, EventEmitter);
 
 /**
  * Starts gateway server and listens for incoming rpc calls
@@ -20,22 +26,24 @@ var Server = function(host, service, exposes) {
  * back to the originating queue.
  */
 Server.prototype.start = function() {
-  amqp.connect('amqp://' + this.host, function(err, conn) {
+  var self = this;
 
+  amqp.connect('amqp://' + self.host, function(err, conn) {
     // Assign connection to class
-    this.conn = conn;
+    self.conn = conn;
 
+    // Listen for incoming RPC calls
     conn.createChannel(function(err, ch) {
-      ch.assertQueue(this.service, {durable: true});
+      ch.assertQueue(self.service, {durable: true});
       ch.prefetch(1);
 
-      console.log('Awaiting RPC request for: ' + this.service);
+      console.log('Awaiting RPC request for: ' + self.service);
 
       // Waiting for Request.call
-      ch.consume(this.service, function reply(msg) {
+      ch.consume(self.service, function reply(msg) {
         var payload = JSON.parse(msg.content.toString());
-        var method  = this.exposes[payload.method];
-        var methodName = this.service + '.' + payload.method;
+        var method  = self.exposes[payload.method];
+        var methodName = self.service + '.' + payload.method;
 
         if (method === undefined) {
           var error = 'Method ' + methodName + ' does not exist';
@@ -54,13 +62,31 @@ Server.prototype.start = function() {
             // Responding to Request.call with response from method
             sendToQueue(ch, msg, response);
             console.timeEnd(methodName);
+
+            // Send payload and response to listeners
+            self.emit('completed', payload, response);
           });
 
           method.apply(method, payload.arguments);
         }
-      }.bind(this));
-    }.bind(this));
-  }.bind(this));
+      });
+    });
+
+    // Publish completed RPC to subscribers
+    conn.createChannel(function (err, ch) {
+      ch.assertExchange(self.service, 'fanout', {durable: false});
+      self.on('completed', function(payload, response) {
+        var message = JSON.stringify({
+          payload: payload,
+          response: response
+        });
+
+        ch.publish(self.service, '', new Buffer(message));
+        console.log("Published", message);
+      });
+    });
+
+  });
 };
 
 /**

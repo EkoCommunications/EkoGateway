@@ -1,6 +1,7 @@
 var should  = require('should');
 var Server  = require('../server');
 var Request = require('../request');
+var Listener = require('../listener');
 
 var host = 'localhost';
 var api  = {
@@ -16,9 +17,11 @@ describe('Gateway', function () {
 
   it('should start a server and listen for incoming rpc requests', function (done) {
     var s = new Server(host, 'test', api);
-    s.start();
-
     var r = new Request(host, 'test');
+    var l = new Listener(host, 'test');
+
+    s.start(true);
+    l.start();
 
     r.call('sum', [1, 7], function (err, response) {
       response.should.equal(8);

@@ -16,7 +16,7 @@ RPC calls will need a `Server` running and a `Request` to make the calls to the 
 
 **server.js**
 
-	var Server = require('server');
+	var Gateway = require('@andreweko/ekogateway');
 	
 	var api = {
 		sum: function(x, y, callback) {
@@ -24,13 +24,13 @@ RPC calls will need a `Server` running and a `Request` to make the calls to the 
 		}
 	};
 	
-	var server = new Server('localhost', 'calculator', api);
+	var server = new Gateway.Server('localhost', 'calculator', api);
 	server.start();
 
 **client.js**
 
-	var Request = require('request');
-	var calculator = new Request('localhost', 'calculator');
+	var Gateway = require('@andreweko/ekogateway');
+	var calculator = new Gateway.Request('localhost', 'calculator');
 	
 	calculator.call('sum', [4, 9], function(err, response) {
 		console.log(response) //This will be 13
@@ -48,8 +48,9 @@ Using the same example above you can subscribe to the calculator service and lis
 
 **listener.js**
 
-	var Listener = require('listener');
-	var calculator = new Listener('localhost', 'calculator');
+	var Gateway = require('@andreweko/ekogateway');
+	var calculator = new Gateway.Listener('localhost', 'calculator');
+	calculator.start()
 	
 	calculator.on('sum', function(payload, response) {
 		console.log(response) // This will be 13

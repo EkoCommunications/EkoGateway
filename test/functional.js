@@ -1,7 +1,5 @@
 var should  = require('should');
-var Server  = require('../server');
-var Request = require('../request');
-var Listener = require('../listener');
+var Gateway = require('../index');
 
 var host = 'localhost';
 var api  = {
@@ -16,9 +14,9 @@ var api  = {
 describe('Gateway', function () {
 
   it('should start a server and listen for incoming rpc requests', function (done) {
-    var s = new Server(host, 'test', api);
-    var r = new Request(host, 'test');
-    var l = new Listener(host, 'test');
+    var s = new Gateway.Server(host, 'test', api);
+    var r = new Gateway.Request(host, 'test');
+    var l = new Gateway.Listener(host, 'test');
 
     s.start(true);
     l.start();

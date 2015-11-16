@@ -1,6 +1,6 @@
-var Listener = require('../listener');
+var Gateway = require('../index');
 
-var user = new Listener('localhost', 'user');
+var user = new Gateway.Listener('localhost', 'user');
 user.start();
 
 user.on('create', function(payload, response) {

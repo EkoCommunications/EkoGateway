@@ -1,5 +1,5 @@
-var Request = require('../request');
-var user = new Request('localhost', 'user');
+var Gateway = require('../index');
+var user = new Gateway.Request('localhost', 'user');
 
 user.call('update', ['Andrew', 'andrew@ekoapp.com'], function(err, response) {
   console.log(response);

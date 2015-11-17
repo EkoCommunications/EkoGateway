@@ -1,7 +1,7 @@
 var should  = require('should');
 var Gateway = require('../index');
 
-var host = 'localhost';
+var host = 'amqp://localhost';
 var api  = {
   sum: function(x, y, callback) {
     callback(null, x + y);

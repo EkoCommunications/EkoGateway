@@ -5,7 +5,7 @@ EkoGateway is a message bus that facilitates calls between microservices and cli
 ## Installation
 
 	npm install @andreweko/ekogateway
-	
+
 ## Usage
 
 There are two (2) general use cases for the gateway. RPC calls between clients and microservices and subscribers that listen for RPC calls from microservices.
@@ -17,25 +17,25 @@ RPC calls will need a `Server` running and a `Request` to make the calls to the 
 **server.js**
 
 	var Gateway = require('@andreweko/ekogateway');
-	
+
 	var api = {
 		sum: function(x, y, callback) {
 			callback(null, x + 7);
 		}
 	};
-	
-	var server = new Gateway.Server('localhost', 'calculator', api);
+
+	var server = new Gateway.Server('amqp://localhost', 'calculator', api);
 	server.start();
 
 **client.js**
 
 	var Gateway = require('@andreweko/ekogateway');
-	var calculator = new Gateway.Request('localhost', 'calculator');
-	
+	var calculator = new Gateway.Request('amqp://localhost', 'calculator');
+
 	calculator.call('sum', [4, 9], function(err, response) {
 		console.log(response) //This will be 13
 	});
-	
+
 	calculator.on('completed', function (conn) {
 	  conn.close();
 	  process.exit(0);
@@ -49,9 +49,9 @@ Using the same example above you can subscribe to the calculator service and lis
 **listener.js**
 
 	var Gateway = require('@andreweko/ekogateway');
-	var calculator = new Gateway.Listener('localhost', 'calculator');
+	var calculator = new Gateway.Listener('amqp://localhost', 'calculator');
 	calculator.start()
-	
+
 	calculator.on('sum', function(payload, response) {
 		console.log(response) // This will be 13
 	});

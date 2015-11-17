@@ -1,6 +1,6 @@
 var Gateway = require('../index');
 
-var user = new Gateway.Listener('localhost', 'user');
+var user = new Gateway.Listener('amqp://localhost', 'user');
 user.start();
 
 user.on('create', function(payload, response) {
